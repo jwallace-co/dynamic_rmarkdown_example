@@ -1,0 +1,9 @@
+### `r g`
+
+```{r echo=FALSE}
+library(stringr)
+ng = length(x)
+par(mar=c(3,7,0,0)+.1)
+barplot(y,names.arg=str_wrap(x,20),horiz=TRUE,col=hsv((1:ng - 1)/ng,.5,.8),border=NA,las=1,cex.names=.5)
+
+```

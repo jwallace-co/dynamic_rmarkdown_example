@@ -1,0 +1,61 @@
+---
+title: "Demo flexdashboard plotly"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+    theme: bootstrap
+---
+
+```{r setup, include=FALSE}
+library(ggplot2)
+library(plotly)
+library(plyr)
+library(tidyverse) # for purrr:map
+library(flexdashboard)
+library(DT) # for datatable()
+library(knitr) # for knit
+
+options(stringsAsFactors=FALSE,width=140)
+
+# csps data
+a <- read.csv("CSPS 2018 demo.csv")
+# meta
+noms <- setdiff(names(a),c("Department_group","Organisation","Organisation_Code"))
+group <- unique(a$Department_group)
+
+```
+Introduction
+===
+Demo dashboard using published people survey data
+
+Data Table {data-navmenu='Something'}
+===
+
+### Raw data
+
+```{r}
+datatable(a)
+```
+
+```{r echo=FALSE, include=FALSE}
+out <- ""
+for (n in noms[1:10]) {
+  out <- c(out,paste0(n," {data-navmenu='Outcomes'}"),'===','')
+  out <- c(out,'Row {.tabset}','---','')
+  for (g in group[1:6]) {
+    sel = a$Department_group==g
+    y = as.numeric(gsub("%","",a[sel,which(names(a)==n)]))
+    x = a$Organisation[sel]
+    out <- c(out, knit_child('Barplot template.Rmd'))
+    }
+  out <- c(out,'')
+  }
+
+```
+
+```{r, echo=FALSE, results="asis"}
+cat(paste(out, collapse = '\n'))
+```
+
+
